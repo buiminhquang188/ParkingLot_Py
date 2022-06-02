@@ -3,7 +3,7 @@ import json
 from sre_constants import FAILURE, SUCCESS
 import requests
 
-from car_info.plate_detection import plate_detection, CAM_ID
+from plate.plate_detection import plate_detection, CAM_ID
 
 
 headers = {"Content-Type": "application/json; charset=utf-8"}
