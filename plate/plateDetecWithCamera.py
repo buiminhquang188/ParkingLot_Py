@@ -1,8 +1,11 @@
 import cv2
 import pytesseract
+body_data = dict(twoFirstDigits="string", fourLastDigits="string", licensePlates="string")
+valid_num = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-']
 
 
 def camera_get_plate(camera_ip):
+
     if len(str(camera_ip)) > 1:
         link_camera = "https://" + str(camera_ip) + '/video'
     else:
@@ -22,9 +25,12 @@ def camera_get_plate(camera_ip):
             if area > largest_rectangle[0]:
                 largest_rectangle = [cv2.contourArea(cnt), cnt, approx]
     x, y, w, h = cv2.boundingRect(largest_rectangle[1])
-
     image = frame[y:y + h, x:x + w]
     cv2.drawContours(frame, [largest_rectangle[1]], 0, (0, 255, 0), 8)
+    cv2.putText(frame, "BIEN SO", (x, y),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.5,
+                (0, 255, 255), 4)
+    cv2.imshow('Dinh Vi Bien So Xe', frame)
     cv2.drawContours(frame, [largest_rectangle[1]], 0, (255, 255, 255), 18)
     pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files (x86)/Tesseract-OCR/tesseract.exe'
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -34,6 +40,17 @@ def camera_get_plate(camera_ip):
     opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=1)
     invert = 255 - opening
     data = pytesseract.image_to_string(invert, lang='eng', config='--psm 6')
-    if "7855" in data and data[:5] == "65-X4":
-        print("Bien so xe {} tai camera_ip {} la:  ".format(data, camera_ip))
+    result = ""
+    for each in data:
+        if each in valid_num or each.isalpha():
+            result = result + each
+    # print("Bien so xe tai camera_ip {} la: {}  ".format(camera_ip, result))
+    body_data['twoFirstDigits'] = result[:2]
+    body_data['fourLastDigits'] = result[-4:]
+    body_data['licensePlates'] = result
+    print(body_data)
+
     key = cv2.waitKey(1)
+
+
+

@@ -1,5 +1,4 @@
 from multiprocessing import Process
-from time import sleep
 from plate.plateDetecWithCamera import camera_get_plate
 
 
@@ -10,7 +9,8 @@ def camera_one():
 
 def camera_two():
     while 1:
-        camera_get_plate(0)
+        # camera_get_plate(0)
+        a = 8
 
 
 if __name__ == '__main__':
